@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block additional_css %}
+    <link rel="stylesheet" href="{% static 'student_life/css/club_style.css' %}">
+    <script defer src="{% static 'student_life/js/club_detail.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>Détail d'un club</h1>
+    <div id="club-detail">
+        <div id="club-detail-navigation">
+            <div class="pull-left">
+                <a class="nav-button" href="{% url 'vie-etu:view_all_clubs' 1 %}">
+                    <svg viewBox="0 0 1024 1024" height="15px">
+                        <path fill="currentColor"
+                              d="M685.248 104.704a64 64 0 0 1 0 90.496L368.448 512l316.8 316.8a64 64 0 0 1-90.496 90.496L232.704 557.248a64 64 0 0 1 0-90.496l362.048-362.048a64 64 0 0 1 90.496 0z"></path>
+                    </svg>
+                    Retour à la liste
+                </a>
+            </div>
+            <div class="pull-right" id="intern-navigation">
+                <div class="pull-right active nav-button" id="intern-nav-description">Description</div>
+                <div class="pull-right nav-button" id="intern-nav-members">Membres</div>
+            </div>
+        </div>
+        <div id="club-detail-content">
+            <div class="overview">
+                <img src="/{{ club.logo }}" alt="logo du club {{ club.name }}" height="100px" width="100px">
+                <div class="overview-text">
+                    <h4>Nom</h4>
+                    <p>{{ club.name }}</p>
+                    <br>
+                    {% if club.president %}
+                        <h4>Président</h4>
+                        <p>{{ club.president }}</p>
+                        <br>
+                    {% endif %}
+                    {% if club.email %}
+                        <h4>Président</h4>
+                        <p>{{ club.email }}</p>
+                        <br>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="description">
+                {{ club.description|escape|linebreaks }}
+            </div>
+            <div id="members">
+            </div>
+            <template id="members-template">
+                <a class="member">
+                    <img src="" alt="">
+                    <div class="member-text">
+                        <h4></h4>
+                        <p></p>
+                    </div>
+                </a>
+            </template>
+        </div>
+    </div>
+
+{% endblock %}

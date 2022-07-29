@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load eboutique_tags %}
+
+{% block additional_css %}
+    <link rel="stylesheet" href="{% static 'eboutique/css/eboutique.css' %}">
+    <script defer src="{% static 'eboutique/js/eboutique.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+    <section id="history" class="side-bar"></section>
+    <div id="eboutique-main">
+        <section id="items">
+            {% for product_group in product_groups %}
+                {% if product_group.products.exists %}
+                    <h2>{{ product_group.name }}</h2>
+                    <div class="product-category">
+                        {% for product in product_group.products.all %}
+                            <div class="item" id="product-{{ product.id }}">
+                                <h3>{{ product.name }}</h3>
+                                <div class="content">
+                                    <img src="/{{ product.image }}" alt="image de café">
+                                    <div class="content-text">
+                                        <p>{{ product.price|cent_to_euro }}</p>
+                                    </div>
+                                </div>
+                                <div class="description">
+                                    {{ product.description }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </section>
+        <section id="money-panel">
+            <header>
+                <h2>Panier</h2>
+            </header>
+            <div id="money-panel-content">
+                <div class="money-slot">
+                    <h3 class="money-descr">Solde actuel</h3>
+                    <p class="money-amount">{{ balance.amount|cent_to_euro }}</p>
+                </div>
+                <div class="money-slot">
+                    <h3 class="money-descr">Recharger la carte</h3>
+                    <label for="add-money"></label>
+                    <input type="number" min="0" max="{{ max_euros_more }}" value="0"
+                           role="button" name="add-money" id="add-money">€
+                </div>
+            </div>
+            <div id="money-result" class="money-slot">
+                <h3>Solde final</h3>
+                <p class="money-amount" id="final-balance" style="width: unset">{{ balance.amount|cent_to_euro }}</p>
+            </div>
+            <div id="validation-button">
+                <button>Valider</button>
+            </div>
+        </section>
+    </div>
+
+    <section id="confirmation-overlay" class="hide">
+        <div id="confirmation-content" class="bottom">
+            <h2>Confirmation</h2>
+            <p>Votre panier contient :</p>
+            <ul></ul>
+            <p id="confirmation-total-amount" style="margin-top: 10px"></p>
+            <p id="confirmation-balance" style="margin-bottom: 10px"></p>
+            <p>Voulez-vous vraiment continuer ?</p>
+            <div id="confirmation-buttons">
+                <button id="confirmation-cancel">Annuler</button>
+                <button id="confirmation-validate">Valider</button>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <template class="money-slot" id="money-slot-template">
+        <h3 class="money-descr"></h3>
+        <div class="item-count">
+            <div class="minus">
+                <img src="https://www.svgrepo.com/show/155829/minus.svg" alt="signe moins">
+            </div>
+            <span class="count-value">1</span>
+            <div class="plus">
+                <img src="https://www.svgrepo.com/show/86612/plus.svg" alt="signe plus">
+            </div>
+        </div>
+        <p class="money-amount"></p>
+    </template>
+{% endblock %}
+
+
+
+{% block page_script %}
+    <script>
+
+        {% comment %}
+        Ensemble de variables globales générées par le serveur et servant
+        à effectuer les opérations sur le panier entièrement du côté client.
+
+        La communication avec le serveur ne se fait que lorque le client valide
+        son panier.
+        {% endcomment %}
+
+
+        {% comment %}
+            Liste des produits disponibles sur la page. Dans le contexte de cette page,
+            chaque produit est un caractérisé par son nom, son prix et les réductions éventuelles
+            qui lui sont associées.
+            La clef de chaque produit est son id en base de données.
+        {% endcomment %}
+        const products = {
+            {% for product in products %}
+                '{{ product.id }}': {
+                    'name': '{{ product.name }}',
+                    'price': '{{ product.price }}',
+                    'discount': {
+                        {% if product.discount.exists %}
+                            {% for discount in product.discount %}
+                                'nb_items': '{{ discount.from_number }}',
+                                'price': '{{ discount.price }}'
+                            {% endfor %}
+                        {% endif %}
+                    }
+                },
+            {% endfor %}
+        }
+
+        let basket = {};
+
+        const starting_money = {{ balance.amount }};
+
+    </script>
+{% endblock %}

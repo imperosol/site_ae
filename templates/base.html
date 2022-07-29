@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% block head %}
+        <title>{% block title %}Bienvenue{% endblock %} - Association des Étudiants UTBM</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{% static 'css/main_style.css' %}">
+        {% block additional_css %} {% endblock %}
+    {% endblock %}
+</head>
+
+<body>
+
+{#The token is always passed here to be accessible from the dom#}
+{#See this workaround https://docs.djangoproject.com/en/2.0/ref/csrf/#acquiring-the-token-if-csrf-use-sessions-is-true#}
+{% csrf_token %}
+
+<nav>
+    {% block nav %}
+        <a href="#">Accueil</a>
+        <div class="dropdown">
+            Vie étudiante
+            <div class="dropdown-content">
+                <a href="{% url 'vie-etu:view_all_clubs' 1 %}">Clubs et assos</a>
+                <a href="#">Avantages</a>
+                <a href="#">Calendrier</a>
+            </div>
+        </div>
+        <a href="#">Forum</a>
+        <a href="{% url 'eboutique:index' %}">Boutique en ligne</a>
+        <a href="#">Connexion</a>
+        <div class="dropdown">
+            Aide
+            <div class="dropdown-content">
+                <a href="#">FAQ</a>
+                <a href="#">Contacts</a>
+                <a href="#">Wiki</a>
+            </div>
+        </div>
+    {% endblock %}
+</nav>
+
+<main>
+    {% block content %}
+
+
+
+    {% endblock %}
+</main>
+
+<footer>
+    {% block footer %}
+        <div>
+            <a href="#">Contacts</a>
+            <a href="#">Mentions légales</a>
+            <a href="#">Propriété intellectuelle</a>
+            <a href="#">Aide</a>
+            <a href="#">R&D</a>
+        </div>
+        <p>Site fait par des gens bons</p>
+    {% endblock %}
+</footer>
+
+{% block page_script %}
+
+{% endblock %}
+</body>
+</html>

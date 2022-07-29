@@ -1,0 +1,258 @@
+* {
+    --utbm-blue: rgb(26, 120, 179);
+    --utbm-blue-light: rgba(26, 120, 179, 0.3);
+}
+
+#eboutique-main {
+    display: flex;
+}
+
+#eboutique-main section {
+    padding: 10px;
+    margin: 10px;
+}
+
+
+#items {
+    flex-grow: 1;
+}
+
+#items h2:not(:first-of-type) {
+    margin-top: 20px;
+}
+
+.product-category {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    column-gap: 15px;
+    row-gap: 15px;
+    justify-content: space-between;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.item {
+    border: #bbbbbb 1px solid;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    max-width: 145px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.item:hover {
+    background-color: #bbbbbb;
+    border-color: #999999;
+}
+
+.item:hover h3 {
+    background-color: #bbbbbb;
+    border-bottom-color: #999999;
+}
+
+.item h3 {
+    text-align: center;
+    background-color: white;
+    border-bottom: #bbbbbb 1px solid;
+    padding: 5px;
+}
+
+.item img {
+    width: 60px;
+    height: 60px;
+}
+
+.item .content {
+    display: flex;
+    align-items: center;
+}
+
+.item .content-text {
+    font-size: 14px;
+    margin: auto;
+}
+
+.item .description {
+    transition: max-height 0.15s ease-out;
+    font-size: .8em;
+    padding-left: 5px;
+    padding-right: 5px;
+    max-height: 0;
+}
+
+.item:hover .description {
+    max-height: 100px;
+    transition: max-height 0.25s ease-in;
+}
+
+
+#money-panel {
+    padding: 10px 0 0 !important;
+    width: 300px;
+    border: #bbbbbb 1px solid;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+#money-panel-content {
+    flex: 1;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    padding: 0;
+    margin: 0;
+}
+
+
+#money-panel h2 {
+    text-align: center;
+    border-bottom: #bbbbbb 1px solid;
+    padding: 0;
+    margin-top: -10px;
+}
+
+
+#money-result {
+    height: 50px;
+    padding-bottom: 0 !important;
+    align-items: flex-end;
+}
+
+
+.money-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 20px;
+    padding: 5px;
+}
+
+#money-panel-content .money-slot:hover {
+    background-color: #bbbbbb;
+    border-color: #999999;
+}
+
+.money-slot .money-descr {
+    font-weight: normal;
+    flex: 1;
+}
+
+.money-slot .money-amount {
+    width: 45px;
+}
+
+.money-slot .item-count {
+    display: flex;
+}
+
+.plus, .minus {
+    display: flex;
+    align-items: center;
+}
+
+.plus img, .minus img {
+    width: 13px;
+    height: 13px;
+}
+
+.plus, .minus, .count-value {
+    cursor: pointer;
+}
+
+.count-value {
+    text-align: center;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.count-value input {
+    max-width: 50px;
+}
+
+#validation-button {
+    text-align: center;
+}
+
+#validation-button button {
+    margin: 0 10px 10px;
+    height: 30px;
+    width: 60px;
+    cursor: pointer;
+    border: var(--utbm-blue) solid 1px;
+    border-radius: 4px;
+    background-color: #328dd2;
+    color: white;
+    font-size: 1em;
+}
+
+#validation-button button:hover {
+    background-color: #00a0ff;
+}
+
+
+@media screen and (max-width: 600px) {
+    #eboutique-main {
+        flex-direction: column;
+    }
+
+    #eboutique-main section {
+        margin: 10px 0 0;
+        padding: 0;
+    }
+
+    #money-panel {
+        /*place div on top of previous flex element*/
+        order: -1;
+        width: 100%;
+    }
+}
+
+
+.hide {
+    visibility: hidden;
+}
+
+#confirmation-overlay {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.bottom {
+    margin-top: 100% !important;
+}
+
+#confirmation-content {
+    padding: 30px;
+    border-radius: 5px;
+    display: block;
+    position: absolute;
+    background-color: #f6f6f6;
+    transition: all .5s ease-out;
+}
+
+#confirmation-content ul {
+    list-style-position: inside;
+}
+
+#confirmation-buttons {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#confirmation-buttons button {
+    width: 100px;
+    height: 30px;
+}

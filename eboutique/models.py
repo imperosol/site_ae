@@ -68,32 +68,19 @@ class Discount(models.Model):
 
     class Meta:
         unique_together = ('item', 'nbr_items')
-        constraints = [CheckConstraint(check=Q(item__gt=1), name='au moins deux produits')]
+        constraints = [CheckConstraint(check=Q(nbr_items__gt=1), name='au moins deux produits')]
 
     def save(self, *args, **kwargs):
         # on encadre la réduction pour qu'aucune réduction ne soit moins avantageuse
-        # que la réduction précédente
-        # si on veut rajouter une réduction 3€ pour le prix de 2 sur un produit qui se vende à 2€ l'unité,
-        # la réduction n'est pas validée.
+        # que le prix de base du produit
         original_price = self.item.price
-        discounts = list(Discount.objects.filter(item=self.item))
-        lowers = [discount for discount in discounts if discount.from_number < self.nbr_items]
-        if len(lowers) > 0:
-            lower = max(lowers).price * self.nbr_items / max(lowers).nbr_items
-        else:
-            lower = original_price * self.nbr_items
-        if self.price >= lower:
-            raise ValidationError("Une réduction ne peut être moins avantageuse que la réduction précédente")
-
-        highers = [discount for discount in discounts if discount.nbr_items > self.nbr_items]
-        higher = min(highers).price * self.nbr_items / min(highers).from_number if len(highers) > 0 else -math.inf
-        if self.price <= higher:
-            raise ValidationError("Une réduction ne peut être plus avantageuse que la réduction suivante")
+        if self.price >= original_price * self.nbr_items:
+            raise ValidationError("Une réduction ne peut être moins avantageuse que le produit original")
 
         super().save(*args, **kwargs)
 
-    def __lt__(self, other):
-        return self.price < other.price
+    def __str__(self):
+        return f"{self.item.name} : {self.price / 100:.2f}€ les {self.nbr_items}"
 
 
 class Combination(models.Model):
@@ -128,7 +115,7 @@ class Basket(models.Model):
     @property
     def total_price(self):
         items = self.basketitem_set.all()
-        return sum(i.quantity * i.product.price for i in items)
+        return sum(i.quantity * i.item.price for i in items)
 
 
 class BasketItem(models.Model):
@@ -142,7 +129,7 @@ class BasketItem(models.Model):
         unique_together = ('basket', 'item_type', 'item_id')
 
     def __str__(self):
-        return f"{self.item.name} - {self.quantity}"
+        return f"{self.item} - {self.quantity}"
 
 
 class AccountRecharge(models.Model):
@@ -177,6 +164,19 @@ class SoldItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     price = models.PositiveIntegerField()
     date_sold = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [CheckConstraint(check=Q(item_type__model__in=[Product, Combination, Discount]), name='item_type_product')]
+
+    @classmethod
+    def from_basket_item(cls, basket_item: BasketItem):
+        return cls(
+            to=basket_item.basket.user,
+            item_type=ContentType.objects.get_for_model(basket_item.item),
+            item_id=basket_item.item_id,
+            quantity=basket_item.quantity,
+            price=basket_item.item.price
+        )
 
     def __str__(self):
         return f"{self.item}; to {self.to}; at {self.date_sold}"
@@ -243,8 +243,8 @@ class Transaction(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     amount = models.PositiveIntegerField()
     description = models.CharField(max_length=100, blank=True)
-    debit_account = models.IntegerField()  # compte débiteur
-    credit_account = models.IntegerField()  # compte créditeur
+    debit_account = models.IntegerField(verbose_name='debit')  # compte débiteur
+    credit_account = models.IntegerField(verbose_name='credit')  # compte créditeur
 
     def __str__(self):
         return f"transaction {self.date_created.replace(microsecond=0, tzinfo=None)}" \
@@ -260,7 +260,6 @@ class Transaction(models.Model):
             signed_amount = -self.amount
         if signed_amount != 0:
             balance, _ = Balance.objects.get_or_create(user=self.user)
-            print(balance.amount + signed_amount)
             if balance.amount + signed_amount < 0:
                 raise OverdraftError(f'Il ne vous reste que {balance.amount / 100:.2f}€')
             elif balance.amount + signed_amount > MAX_MONEY_ON_ACCOUNT:

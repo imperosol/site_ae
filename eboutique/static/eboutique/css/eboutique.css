@@ -37,6 +37,7 @@
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     max-width: 145px;
+    min-width: 120px;
     overflow: hidden;
     cursor: pointer;
 }
@@ -123,7 +124,7 @@
 }
 
 
-.money-slot {
+.main-slot {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -131,7 +132,14 @@
     padding: 5px;
 }
 
-#money-panel-content .money-slot:hover {
+.secondary-slot {
+    padding-left: 10%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 80%;
+}
+
+.money-slot:hover {
     background-color: #bbbbbb;
     border-color: #999999;
 }
@@ -173,6 +181,10 @@
     max-width: 50px;
 }
 
+.final-slot:hover {
+    background-color: transparent;
+}
+
 #validation-button {
     text-align: center;
 }
@@ -193,6 +205,10 @@
     background-color: #00a0ff;
 }
 
+#confirmation-validate:disabled {
+    background-color: white;
+}
+
 
 @media screen and (max-width: 600px) {
     #eboutique-main {
@@ -210,7 +226,6 @@
         width: 100%;
     }
 }
-
 
 .hide {
     visibility: hidden;
@@ -234,7 +249,7 @@
     margin-top: 100% !important;
 }
 
-#confirmation-content {
+#confirmation-overlay-content {
     padding: 30px;
     border-radius: 5px;
     display: block;
@@ -243,7 +258,7 @@
     transition: all .5s ease-out;
 }
 
-#confirmation-content ul {
+#confirmation-overlay-content ul {
     list-style-position: inside;
 }
 
@@ -255,4 +270,34 @@
 #confirmation-buttons button {
     width: 100px;
     height: 30px;
+}
+
+#server-response-overlay {
+    z-index: 1;
+    position: fixed;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 42px;
+    bottom: -42px;
+    margin: 0 !important;
+    padding-right: 10px;
+    padding-left: 10px;
+    left: calc(50% - 100px);
+    transition: all .25s ease-out;
+    color: white;
+    border-radius: 5px;
+}
+
+#server-response-overlay:not(.hide) {
+    transition: all .5s ease-in;
+    bottom: 20%;
+}
+
+.success {
+    background-color: #28a745;
+}
+
+.failure {
+    background-color: #dc3545;
 }

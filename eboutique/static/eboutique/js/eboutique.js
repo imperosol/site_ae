@@ -279,6 +279,23 @@ function add_item(product_id) {
     update_balance();
 }
 
+function show_category(category_id) {
+    let id = "group-" + category_id;
+    let categories = document.getElementById('items').getElementsByClassName('product-group');
+    for (const category of categories) {
+        category.style.display = category.id === id ? 'block' : 'none';
+    }
+    const buttons = document.getElementById('items')
+        .querySelector('.category-navigation')
+        .querySelectorAll('button');
+    for (const button of buttons) {
+        button.classList.remove('active');
+        if (button.value === category_id) {
+            button.classList.add('active');
+        }
+    }
+}
+
 function remove_item(product_id) {
     const money_slot = document.getElementById(product_id);
     if (money_slot !== null) {
@@ -405,7 +422,12 @@ function create_basket(money_added, basket) {
                         // TODO appel à l'API pour payer en ligne
                     } else {
                         fetch(basket_validate_request).then(r => {
-                            if (r.ok) show_success_message_overlay();
+                            if (r.ok) {
+                                show_success_message_overlay();
+                                setTimeout(() => {
+                                    window.location.replace("/eboutique/");
+                                }, 3000);
+                            }
                             else show_failure_message_overlay(r.statusText);
                         });
                     }
@@ -450,7 +472,6 @@ function display_confirmation_overlay() {
 }
 
 function init_buttons_listeners() {
-    const buttons = document.getElementById('items').getElementsByClassName('item');
     document.getElementById('add-money').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') confirm_money_add();
     });
@@ -458,8 +479,16 @@ function init_buttons_listeners() {
     document.getElementById('validation-button').querySelector('button')
         .addEventListener('click', display_confirmation_overlay);
 
+    const buttons = document.getElementById('items').getElementsByClassName('item');
     for (const button of buttons) {
         button.addEventListener('click', () => add_item(get_product_id(button)));
+    }
+
+    const group_buttons = document.getElementById('items')
+        .querySelector('.category-navigation')
+        .querySelectorAll('button');
+    for (const button of group_buttons) {
+        button.addEventListener('click', () => show_category(button.value))
     }
 }
 

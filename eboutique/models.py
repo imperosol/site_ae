@@ -165,8 +165,6 @@ class SoldItem(models.Model):
     price = models.PositiveIntegerField()
     date_sold = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        constraints = [CheckConstraint(check=Q(item_type__model__in=[Product, Combination, Discount]), name='item_type_product')]
 
     @classmethod
     def from_basket_item(cls, basket_item: BasketItem):

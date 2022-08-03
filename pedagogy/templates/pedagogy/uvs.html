@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block additional_css %}
+    <link rel="stylesheet" href="{% static 'pedagogy/css/uv_style.css' %}">
+{% endblock %}
+
+{% block content %}
+{#    <h1>Recherche d'une UV</h1>#}
+{#    <form action="">#}
+{#        {{ form }}#}
+{#    </form>#}
+
+    <hr>
+
+    {% if user.followed_uvs.exists %}
+        <ul class="uvs-list">
+            {% for uv in user.followed_uvs.all %}
+                <li>
+                    <a href="{% url 'pedagogy:uv_detail' uv.uv.code %}">
+                        {{ uv.uv.code }} - {{ uv.uv.title }} {% if not uv.uv.is_open %}(UE fermée){% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+{% endblock %}

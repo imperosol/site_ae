@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    {{ uv.code }} - AE
+{% endblock %}
+
+{% block additional_css %}
+    <link rel="stylesheet" href="{% static 'pedagogy/css/uv_style.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>{{ uv.code }}</h1>
+    <h2>{{ uv.title }}</h2>
+    <br>
+
+    <div class="uv-container">
+        <div class="uv-view-infos">
+            <div class="uv-info-panel">
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Catégorie</span>
+                    <span class="panel-row-value">{{ uv.credit_type }}</span>
+                </div>
+                <hr>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Crédits</span>
+                    <span class="panel-row-value">{{ uv.credits }}</span>
+                </div>
+                <hr>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Cours magistral</span>
+                    <span class="panel-row-value">{{ uv.hours_CM }} h</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Travaux dirigés</span>
+                    <span class="panel-row-value">{{ uv.hours_TD }} h</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Travaux pratiques</span>
+                    <span class="panel-row-value">{{ uv.hours_TP }} h</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Travail personnel</span>
+                    <span class="panel-row-value">{{ uv.hours_THE }} h</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Projets</span>
+                    <span class="panel-row-value">{{ uv.hours_PRJ }} h</span>
+                </div>
+                <hr>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Disponibilité</span>
+                    <div class="panel-row-value">
+                        {% if uv.spring %}
+                            <p>Printemps</p>
+                        {% endif %}
+                        {% if uv.fall %}
+                            <p>Automne</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Responsable</span>
+                    <div class="panel-row-value">
+                        {% if uv.spring %}
+                            <p>
+                                {{ uv.spring_manager }}
+                                {% if uv.fall and uv.fall_manager != uv.spring_manager %}(printemps){% endif %} </p>
+                        {% endif %}
+                        {% if uv.fall and uv.fall_manager != uv.spring_manager or not uv.spring %}
+                            <p>
+                                {{ uv.fall_manager }}
+                                {% if uv.spring and uv.spring_manager != uv.fall_manager %}(automne){% endif %} </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Langue</span>
+                    <span class="panel-row-value">{{ uv.language }}</span>
+                </div>
+            </div>
+
+
+            <div class="uv-info-panel">
+                <h4>Avis étudiants</h4>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Note globale</span>
+                    <span class="panel-row-value">{{ grade.global }}</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Utilité</span>
+                    <span class="panel-row-value">{{ grade.usefulness }}</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Interêt</span>
+                    <span class="panel-row-value">{{ grade.interest }}</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Enseignants</span>
+                    <span class="panel-row-value">{{ grade.teaching }}</span>
+                </div>
+                <div class="uv-panel-row">
+                    <span class="panel-row-descr">Charge de travail</span>
+                    <span class="panel-row-value">{{ grade.work_load }}</span>
+                </div>
+            </div>
+
+            <div class="uv-info-panel">
+                {% regroup annals by semester as annal_list %}
+                {% for annal in annal_list %}
+                    <ul>
+                        {{ annal.grouper }}
+                        {% for item in annal.list %}
+                            <li class="{% if item.is_approved %}approved{% else %}pending{% endif %}">
+                                {{ item.file }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="uv-view-content">
+            <div class="uv-description">
+                {% if uv.program %}
+                    <h4>Programme</h4>
+                    <p style="white-space: pre-line">{{ uv.program }}</p>
+                    <br>
+                {% endif %}
+
+                {% if uv.objectives %}
+                    <h4>Objectifs</h4>
+                    <p>{{ uv.objectives }}</p>
+                    <br>
+                {% endif %}
+
+                {% if uv.skills %}
+                    <h4>Compétences acquises</h4>
+                    <p>{{ uv.skills }}</p>
+                    <br>
+                {% endif %}
+
+                {% if uv.key_concepts %}
+                    <h4>Concepts clefs</h4>
+                    <p>{{ uv.key_concepts }}</p>
+                    <br>
+                {% endif %}
+            </div>
+            <div class="uv-reviews">
+                {% for review in reviews %}
+                    <div class="review {% if review.is_approved %}approved{% else %}pending{% endif %} ">
+                        <h4>{{ review.author }}</h4>
+                        <p>Publié le : {{ review.created_ad }}</p>
+                        <p>Édité le : {{ review.updated_ad }}</p>
+                        <p>{{ review.comment }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

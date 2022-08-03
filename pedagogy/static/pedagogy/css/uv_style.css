@@ -1,0 +1,92 @@
+.approved {
+    /*background-color: #2cab13;*/
+    background-color: rgba(44, 171, 19, 0.25);
+}
+
+.pending {
+    /*background-color: #ff0000;*/
+    background-color: rgba(255, 0, 0, 0.25);
+}
+
+.uvs-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.uvs-list li {
+    margin: 5px 0;
+    padding: 0;
+}
+
+.uvs-list li a {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    padding: 10px 5px;
+    background-color: #404040;
+    font-size: 14px;
+}
+
+.uvs-list li a:hover {
+    background-color: #505050;
+}
+
+
+.uv-container {
+    display: flex;
+    flex-direction: row;
+    column-gap: 30px;
+    width: 100%;
+    height: 100%;
+}
+
+.uv-view-infos {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 30px;
+}
+
+.uv-view-infos hr {
+    width: 70%;
+    margin: 5px 0;
+}
+
+.uv-info-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #404040;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.uv-panel-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    width: 100%;
+}
+
+.panel-row-value {
+    margin-left: 10px;
+    text-align: left;
+}
+
+.panel-row-descr {
+    width: 60%;
+    text-align: right;
+}
+
+.uv-view-content {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    width: 100%;
+    height: 100%;
+}

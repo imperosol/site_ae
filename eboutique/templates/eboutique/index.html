@@ -13,21 +13,32 @@
     <section id="history" class="side-bar"></section>
     <div id="eboutique-main">
         <section id="items">
+            <div class="category-navigation">
+                {% for product_group in product_groups %}
+                    {% if product_group.products.exists %}
+                        <button class="dark {% if forloop.first %}active{% endif %} " value="{{ forloop.counter }}">
+                            {{ product_group.name }}
+                        </button>
+                    {% endif %}
+                {% endfor %}</div>
             {% for product_group in product_groups %}
                 {% if product_group.products.exists %}
-                    <h2>{{ product_group.name }}</h2>
-                    <div class="product-category">
-                        {% for product in product_group.products.all %}
-                            <div class="item" id="product-{{ product.id }}">
-                                <h3>{{ product.name }}</h3>
-                                <div class="content">
-                                    <img src="/{{ product.image }}" alt="image de {{ product.name }}">
-                                    <div class="content-text">
-                                        <p>{{ product.price|cent_to_euro }}</p>
+                    <div class="product-group" id="group-{{ forloop.counter }}"
+                         {% if not forloop.first %}style="display: none" {% endif %}>
+                        <h2>{{ product_group.name }}</h2>
+                        <div class="product-category">
+                            {% for product in product_group.products.all %}
+                                <div class="item dark" id="product-{{ product.id }}">
+                                    <h3 class="dark">{{ product.name }}</h3>
+                                    <div class="content">
+                                        <img src="/{{ product.image }}" alt="image de {{ product.name }}">
+                                        <div class="content-text">
+                                            <p>{{ product.price|cent_to_euro }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -37,18 +48,18 @@
                 <h2>Panier</h2>
             </header>
             <div id="money-panel-content">
-                <div class="money-slot main-slot">
+                <div class="money-slot main-slot dark">
                     <h3 class="money-descr">Solde actuel</h3>
                     <p class="money-amount">{{ balance.amount|cent_to_euro }}</p>
                 </div>
-                <div class="money-slot main-slot">
+                <div class="money-slot main-slot dark">
                     <h3 class="money-descr">Recharger la carte</h3>
                     <label for="add-money"></label>
                     <input type="number" min="0" max="{{ max_euros_more }}" value="0"
                            role="button" name="add-money" id="add-money">€
                 </div>
             </div>
-            <div id="money-result" class="money-slot main-slot final-slot">
+            <div id="money-result" class="money-slot main-slot final-slot dark">
                 <h3>Solde final</h3>
                 <p class="money-amount" id="final-balance" style="width: unset">{{ balance.amount|cent_to_euro }}</p>
             </div>
@@ -63,7 +74,7 @@
     </section>
 
     <section id="confirmation-overlay" class="hide">
-        <div id="confirmation-overlay-content" class="bottom">
+        <div id="confirmation-overlay-content" class="bottom dark">
             <h2>Confirmation</h2>
             <p>Votre panier contient :</p>
             <ul></ul>
@@ -97,69 +108,5 @@
 
 
 {% block page_script %}
-    <script>
-        {% comment %}
-        L'ensemble du contenu de ce script est composé
-        de variables globales générées par le serveur au moment du rendu de la page
-        et servant à effectuer les opérations sur le panier entièrement du côté client.
-
-        La communication avec le serveur ne se fait que lorque le client valide
-        son panier.
-
-        Le code est illisible, mais ce formatage permet de minimiser le nombre de lignes
-        dans le document généré.
-        {% endcomment %}
-
-        {% comment %}
-            Liste des produits disponibles sur la page. Dans le contexte de cette page,
-            chaque produit est un caractérisé par son nom, son prix et les réductions éventuelles
-            qui lui sont associées.
-            La clef de chaque produit est son id en base de données.
-        {% endcomment %}
-        const products = {
-            {% for product in products %}
-                '{{ product.id }}': {
-                    'name': '{{ product.name }}',
-                    'price': '{{ product.price }}',
-                    'discount': [
-                        {% if product.discount.exists %}
-                            {% for discount in product.discount.all %}
-                                {
-                                    'nbr_items': {{ discount.nbr_items }},
-                                    'price': {{ discount.price }}
-                                },
-                            {% endfor %}
-                        {% endif %}
-                    ]
-                },
-            {% endfor %}
-        }
-
-        const combinations = {{% for combination in combinations %}
-            {{ combination.id }}: {
-                'name'
-            :
-                '{{ combination.name }}',
-                    'price'
-            :
-                '{{ combination.price }}',
-                    'products'
-            :
-                [{% for product in combination.products.all %}{{ product.id }}, {% endfor %}]
-            },{% endfor %}
-        }
-
-        const combinations_for_product = {
-        {% for product in products %}{{ product.id }}:
-        [{% for combination in product.combinations.all %}
-            {% if combination in combinations %}{{ combination.id }}, {% endif %}{% endfor %}
-        ] ,
-        {% endfor %}
-        }
-
-        let basket = {};
-
-        const starting_money = {{ balance.amount }};
-
-    </script>
+    {% include 'eboutique/index_js_data.html' %}
 {% endblock %}

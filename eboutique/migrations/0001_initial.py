@@ -64,7 +64,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=40, unique=True)),
                 ('description', models.CharField(blank=True, max_length=100)),
                 ('price', models.PositiveIntegerField()),
-                ('image', models.ImageField(blank=True, null=True, upload_to=pathlib.PureWindowsPath('D:/documents/travail/python/django_projects/site_ae/static/img/products'))),
+                ('image', models.ImageField(blank=True, null=True, upload_to=pathlib.PureWindowsPath(
+                    '/media/products'))),
                 ('is_available', models.BooleanField(default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='eboutique.productgroup')),
@@ -88,7 +89,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=40, unique=True)),
                 ('description', models.CharField(blank=True, max_length=100)),
                 ('price', models.PositiveIntegerField()),
-                ('image', models.ImageField(blank=True, null=True, upload_to=pathlib.PureWindowsPath('D:/documents/travail/python/django_projects/site_ae/static/img/products'))),
+                ('image', models.ImageField(blank=True, null=True, upload_to=pathlib.PureWindowsPath(
+                    '/media/products'))),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('is_active', models.BooleanField(default=True)),
                 ('products', models.ManyToManyField(related_name='combinations', to='eboutique.product')),

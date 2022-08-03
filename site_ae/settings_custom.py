@@ -125,10 +125,19 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MAX_MONEY_ON_ACCOUNT = 10000
+
+UTBM_LOCATIONS = [
+    ("BELFORT", "Belfort"),
+    ("SEVENANS", "Sevenans"),
+    ("MONTBELIARD", "Montbéliard"),
+    ("EBOUTIC", "Eboutic"),
+]
 

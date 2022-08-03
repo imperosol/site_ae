@@ -4,6 +4,7 @@
     box-sizing: border-box;
     /*all: unset;*/
     font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
 }
 
 body {
@@ -14,6 +15,10 @@ h1 {
     font-size: 2.5rem;
     font-weight: normal;
     margin: 10px 10px 10px 20px;
+}
+
+h2 {
+    font-size: 1.5rem;
 }
 
 hr {
@@ -27,7 +32,7 @@ hr {
 nav {
     position: fixed;
     top: 0;
-    padding: 0 20%;
+    padding: 0;
     /*background-color: #1a78b3;*/
     background-color: #393939;
     width: 100%;
@@ -47,8 +52,7 @@ nav a, .dropdown {
     cursor: pointer;
 }
 
-nav a, .dropdown  {
-    /*background-image: linear-gradient(to bottom, #454545 50%, #1a78b3 50%);*/
+nav a, .dropdown {
     background-image: linear-gradient(to bottom, #393939 50%, #454545 50%);
     background-size: 100% 200%;
 }
@@ -86,17 +90,33 @@ main {
     width: 90%;
     margin: 70px auto auto;
     padding: 20px;
-    background-color: #f6f6f6;
     border-radius: 10px;
     box-shadow: #111 0 0 15px;
+}
+
+main.light {
+    background-color: #f6f6f6;
+    color: black;
+}
+
+main.dark {
+    background-color: #393939;
+    color: white;
 }
 
 footer {
     width: 100%;
     text-align: center;
-    /*position: absolute;*/
-    background-color: #f6f6f6;
     margin-top: 20px;
     bottom: 0;
+}
+
+footer.light {
+    background-color: #f6f6f6;
+}
+
+footer.dark {
+    background-color: #494949;
+    color: darkgrey;
 }
 

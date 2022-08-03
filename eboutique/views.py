@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum, Count
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
@@ -14,7 +14,7 @@ from .models import Product, Discount, Balance, ProductGroup, Combination, SoldI
 @login_required
 @require_GET
 def index(request):
-    product_groups = ProductGroup.objects.exclude(name='Viennoiseries')
+    product_groups = ProductGroup.objects.all()
     products = Product.objects.filter(category__in=product_groups).order_by('category')
     balance = Balance.objects.get_or_create(user=request.user)[0]
     discounts = Discount.objects.order_by('item__category')
@@ -38,11 +38,35 @@ def index(request):
 @require_GET
 def get_amount_sold(request, product_id):
     product = Product.objects.get(pk=int(product_id))
+    combinations = product.combinations.all()
+    discounts = product.discount.all()
+    print(combinations)
+    print(product)
+    total = 0
+
     content_type = ContentType.objects.get_for_model(Product)
-    regular_sells = SoldItem.objects.filter(item_type=content_type, item_id=product.id)
-    regular_sells = regular_sells.aggregate(Sum('quantity'))['quantity__sum']
+    sells = SoldItem.objects.filter(item_type=content_type, item_id=product.id)
+    sells = sells.aggregate(Sum('quantity'))['quantity__sum']
+    total += sells if sells is not None else 0
+
     content_type = ContentType.objects.get_for_model(Combination)
-    combinations = Combination.objects.filter(products__id=product.id)
-    combination_sells = SoldItem.objects.filter(item_type=content_type, item_id__in=combinations)
-    combination_sells = combination_sells.aggregate(Sum('quantity'))['quantity__sum']
-    return HttpResponse(regular_sells + combination_sells)
+    sells = SoldItem.objects.filter(item_type=content_type, item_id__in=combinations)
+    sells = sells.aggregate(Sum('quantity'))['quantity__sum']
+    total += sells if sells is not None else 0
+
+    content_type = ContentType.objects.get_for_model(Discount)
+    sells = SoldItem.objects.filter(item_type=content_type, item_id__in=discounts)
+    for item in sells:
+        total += item.quantity * item.item.nbr_items
+
+    return HttpResponse(total)
+
+
+@require_GET
+@login_required
+def get_balance(request, user_id):
+    try:
+        balance = Balance.objects.get(user=user_id)
+        return HttpResponse(balance.amount)
+    except Balance.DoesNotExist:
+        return HttpResponseNotFound()

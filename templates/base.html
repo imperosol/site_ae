@@ -4,7 +4,7 @@
 <html lang="fr">
 <head>
     {% block head %}
-        <title>{% block title %}Bienvenue{% endblock %} - Association des Étudiants UTBM</title>
+        <title>{% block title %}Association étudiant{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="utf-8">
         <link rel="stylesheet" href="{% static 'css/main_style.css' %}">
@@ -20,7 +20,7 @@
 
 <nav>
     {% block nav %}
-        <a href="#">Accueil</a>
+        <a href="{% url 'index' %}">Accueil</a>
         <div class="dropdown">
             Vie étudiante
             <div class="dropdown-content">
@@ -29,9 +29,29 @@
                 <a href="#">Calendrier</a>
             </div>
         </div>
+        <div class="dropdown">
+            Cours
+            <div class="dropdown-content">
+                <a href="{% url 'pedagogy:uv_search' %}">Guide des UVs</a>
+                <a href="#">Emploi du temps</a>
+            </div>
+        </div>
         <a href="#">Forum</a>
-        <a href="{% url 'eboutique:index' %}">Boutique en ligne</a>
-        <a href="#">Connexion</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'eboutique:index' %}">Boutique en ligne</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+            {{ user.username }}
+            <div class="dropdown-content">
+                <a href="#">Profil</a>
+                <a href="#">Déconnexion</a>
+            </div>
+        </div>
+        {% else %}
+            <a href="#">Connexion</a>
+            <a href="#">Inscription</a>
+        {% endif %}
         <div class="dropdown">
             Aide
             <div class="dropdown-content">
@@ -43,7 +63,7 @@
     {% endblock %}
 </nav>
 
-<main>
+<main class="dark">
     {% block content %}
 
 
@@ -51,7 +71,7 @@
     {% endblock %}
 </main>
 
-<footer>
+<footer class="dark">
     {% block footer %}
         <div>
             <a href="#">Contacts</a>

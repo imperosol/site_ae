@@ -75,11 +75,11 @@ def get_clubs(request: HttpRequest) -> HttpResponse:
 
         {
             "model": "student_life.club",
-            "id": <int:id>,
+            "id": <int>,
             "name": "Nom du club",
             "description": "Une très belle description",
             "logo": "path/to/img",
-            "is_active": true,
+            "is_active": <bool>,
             "created_at": "2022-07-24T17:30:52.662Z",
             "president": "Nom du président"
         }
@@ -115,6 +115,7 @@ def get_club_members(request: HttpRequest, club_id: int) -> HttpResponse:
     Les membres sont triés par importance : d'abord le président, puis le bureau, puis les autres membres.
 
     Le JSON de la réponse est formé de la manière suivante : ::
+
         {
             'id': <int>,
             'user_id': <int>,

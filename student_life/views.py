@@ -6,11 +6,10 @@ from django.shortcuts import render
 from .models import Club, ClubMember
 
 
-def view_all_clubs(request, page = 1) -> HttpResponse:
-    res = Club.objects.order_by('name') \
-        .values('id', 'name', 'description', 'logo', 'is_active', 'created_at', 'short_description') \
-        .annotate(
-        president=ClubMember.objects.filter(club_id=OuterRef('id'), is_president=True).values('user__username'))
+def view_all_clubs(request, page: int = 1) -> HttpResponse:
+    res = Club.objects.order_by('name').annotate(
+        president=ClubMember.objects.filter(club_id=OuterRef('id'), is_president=True).values('user__username')
+    )
     paginator = Paginator(res, 10)
     context = {
         'clubs': paginator.get_page(page),
@@ -20,7 +19,7 @@ def view_all_clubs(request, page = 1) -> HttpResponse:
     return render(request, 'student_life/view_all.html', context)
 
 
-def view_detail(request: HttpRequest, club_id: int, name) -> HttpResponse:
+def view_detail(request: HttpRequest, club_id: int, name: str) -> HttpResponse:
     """
     Renvoie la page contenant les détails sur un club
 

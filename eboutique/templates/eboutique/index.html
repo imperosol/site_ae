@@ -6,6 +6,8 @@
 {% block additional_css %}
     <link rel="stylesheet" href="{% static 'eboutique/css/eboutique.css' %}">
     <script defer src="{% static 'eboutique/js/eboutique.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <script defer src="{% static 'font-awesome/js/fontawesome.min.js' %}"></script>
 {% endblock %}
 
 
@@ -31,7 +33,7 @@
                                 <div class="item dark" id="product-{{ product.id }}">
                                     <h3 class="dark">{{ product.name }}</h3>
                                     <div class="content">
-                                        <img src="/{{ product.image }}" alt="image de {{ product.name }}">
+                                        <img src="{{ product.image.url }}" alt="image de {{ product.name }}">
                                         <div class="content-text">
                                             <p>{{ product.price|cent_to_euro }}</p>
                                         </div>
@@ -92,13 +94,9 @@
         <div class="main-slot">
             <h3 class="money-descr"></h3>
             <div class="item-count">
-                <div class="minus">
-                    <img src="https://www.svgrepo.com/show/155829/minus.svg" alt="signe moins">
-                </div>
+                <span class="minus"><i class="fa fa-minus-circle"></i></span>
                 <span class="count-value">1</span>
-                <div class="plus">
-                    <img src="https://www.svgrepo.com/show/86612/plus.svg" alt="signe plus">
-                </div>
+                <span class="plus"><i class="fa fa-plus-circle"></i></span>
             </div>
             <p class="money-amount"></p>
         </div>

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load markdownify %}
 
 {% block title %}
     {{ uv.code }} - AE
@@ -8,6 +9,8 @@
 
 {% block additional_css %}
     <link rel="stylesheet" href="{% static 'pedagogy/css/uv_style.css' %}">
+    <link rel="stylesheet" href="{% static 'pedagogy/css/grade_stars.css' %}">
+    <script defer src="{% static 'pedagogy/js/uv_detail.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -85,79 +88,143 @@
 
 
             <div class="uv-info-panel">
-                <h4>Avis étudiants</h4>
-                <div class="uv-panel-row">
-                    <span class="panel-row-descr">Note globale</span>
-                    <span class="panel-row-value">{{ grade.global }}</span>
-                </div>
-                <div class="uv-panel-row">
-                    <span class="panel-row-descr">Utilité</span>
-                    <span class="panel-row-value">{{ grade.usefulness }}</span>
-                </div>
-                <div class="uv-panel-row">
-                    <span class="panel-row-descr">Interêt</span>
-                    <span class="panel-row-value">{{ grade.interest }}</span>
-                </div>
-                <div class="uv-panel-row">
-                    <span class="panel-row-descr">Enseignants</span>
-                    <span class="panel-row-value">{{ grade.teaching }}</span>
-                </div>
-                <div class="uv-panel-row">
-                    <span class="panel-row-descr">Charge de travail</span>
-                    <span class="panel-row-value">{{ grade.work_load }}</span>
-                </div>
+                <h3 class="panel-title">Avis étudiants</h3>
+                {% for key, grade in grades.items %}
+                    <div class="uv-panel-row">
+                        <span class="panel-row-descr">{{ grade.label }}</span>
+                        {% if grade.value is not None %}
+                            <span class="panel-row-value">
+                                {% include 'pedagogy/grade_stars.html' with label=key|add:'global' value=grade.value %}
+                            </span>
+                        {% else %}
+                            <span class="panel-row-value">N/A</span>
+                        {% endif %}
+                    </div>
+                    {% if forloop.first %}
+                        <hr>  {# séparateur entre la note globale et les autres #}
+                    {% endif %}
+                {% endfor %}
             </div>
 
             <div class="uv-info-panel">
+                <h3 class="panel-title">Annales ({{ annals.count }})</h3>
                 {% regroup annals by semester as annal_list %}
                 {% for annal in annal_list %}
-                    <ul>
-                        {{ annal.grouper }}
-                        {% for item in annal.list %}
-                            <li class="{% if item.is_approved %}approved{% else %}pending{% endif %}">
-                                {{ item.file }}
-                            </li>
+                    <h4>{{ annal.grouper }}</h4>
+                    {% regroup annal.list by is_approved as annal_sublist %}
+                    {% for sublist in annal_sublist %}
+                        {% for item in sublist.list %}
+
+                            {% if sublist.grouper == True %}
+                                <div class="annal-panel-group approved">
+                                <p class="moderation-status-comment">Approuvées par la modération</p>
+                            {% else %}
+                                <div class="annal-panel-group pending">
+                                <p class="moderation-status-comment">Pas encore validées. À vos risques et périls.</p>
+                            {% endif %}
+
+                        <a href="{% url 'pedagogy:download_annal' item.id %}"
+                           class="annal-panel-row">
+                            <span class="annal-type">{{ item.get_exam_type_display }}</span>
+                            <span class="annal-publisher">{{ item.publisher|upper }}</span>
+                        </a>
+                        </div>
                         {% endfor %}
-                    </ul>
+                    {% endfor %}
+                    <br>
                 {% endfor %}
+                </div>
             </div>
-        </div>
 
-        <div class="uv-view-content">
-            <div class="uv-description">
-                {% if uv.program %}
-                    <h4>Programme</h4>
-                    <p style="white-space: pre-line">{{ uv.program }}</p>
-                    <br>
-                {% endif %}
+            <div class="uv-view-content">
+                <div class="uv-description">
+                    {% if uv.program %}
+                        <h4>Programme</h4>
+                        {{ uv.program|markdownify|linebreaks }}
+                        <br>
+                    {% endif %}
 
-                {% if uv.objectives %}
-                    <h4>Objectifs</h4>
-                    <p>{{ uv.objectives }}</p>
-                    <br>
-                {% endif %}
+                    {% if uv.objectives %}
+                        <h4>Objectifs</h4>
+                        <p>{{ uv.objectives|markdownify|linebreaks }}</p>
+                        <br>
+                    {% endif %}
 
-                {% if uv.skills %}
-                    <h4>Compétences acquises</h4>
-                    <p>{{ uv.skills }}</p>
-                    <br>
-                {% endif %}
+                    {% if uv.skills %}
+                        <h4>Compétences acquises</h4>
+                        <p>{{ uv.skills|markdownify|linebreaks }}</p>
+                        <br>
+                    {% endif %}
 
-                {% if uv.key_concepts %}
-                    <h4>Concepts clefs</h4>
-                    <p>{{ uv.key_concepts }}</p>
-                    <br>
-                {% endif %}
-            </div>
-            <div class="uv-reviews">
-                {% for review in reviews %}
-                    <div class="review {% if review.is_approved %}approved{% else %}pending{% endif %} ">
-                        <h4>{{ review.author }}</h4>
-                        <p>Publié le : {{ review.created_ad }}</p>
-                        <p>Édité le : {{ review.updated_ad }}</p>
-                        <p>{{ review.comment }}</p>
+                    {% if uv.key_concepts %}
+                        <h4>Concepts clefs</h4>
+                        <p>{{ uv.key_concepts }}</p>
+                        <br>
+                    {% endif %}
+                </div>
+                <div class="uv-reviews">
+                    <div class="user-review" id="user-review">
+                        <h4>
+                            Votre commentaire
+                            <i class="fa fa-chevron-circle-down" id="user-review-chevron"></i>
+                        </h4>
+                        <div class="user-review-content shrink" id="user-review-content">
+                            <form action="{% url 'pedagogy:register_review' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="uv_id" value="{{ uv.id }}">
+                                <div class="review-grades">
+                                    {% for name, grade in form.grades.items %}
+                                        <div class="grade">
+                                            <span class="grade-label">{{ name }}</span>
+                                            {% include 'pedagogy/grade_stars.html' with editable=True label=grade.label %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="review-comment">
+                                    <label for="user-review-comment"></label>
+                                    <textarea required spellcheck="true"
+                                              name="user-review-comment" id="user-review-comment"
+                                              placeholder="Votre commentaire..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-dark">
+                                    Envoyer
+                                    <i class="fa fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+
                     </div>
-                {% endfor %}
+                    {% for review in reviews %}
+                        <div class="review {% if review.is_approved %}approved{% else %}pending{% endif %} ">
+                            <header>
+                                <img src="{{ review.author.profile.profile_picture.url }}"
+                                     alt="photo de profil de {{ review.author }}">
+                                <div> {# les divs sans classe servent juste à grouper les items pour le flex #}
+                                    <h4>{{ review.author }}</h4>
+                                    <div class="dates">
+                                        <p>Publié le : {{ review.created_ad }}</p>
+                                        {% if review.updated_ad != review.created_ad %}
+                                            <p>Édité le : {{ review.updated_ad }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </header>
+                            <div class="review-grades">
+                                {% for key, grade in review.grade_dict.items %}
+                                    <div class="grade">
+                                        <span class="grade-label">{{ grade.label }}</span>
+                                        {% if grade.value is not None %}
+                                            {% include 'pedagogy/grade_stars.html' with label=key|add:review.author.username value=grade.value %}
+                                        {% else %}
+                                            <span class="">N/A</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <p class="review-text">{{ review.comment|markdownify }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

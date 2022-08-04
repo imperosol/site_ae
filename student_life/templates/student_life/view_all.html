@@ -60,7 +60,7 @@
     <div class="container" id="club-list">
         {% for club in clubs %}
             <a href="{% url 'vie-etu:view_detail' club.id club.name|slugify %}">
-                <img src="/{{ club.logo }}" alt="logo du club {{ club.name }}" width="50px" height="50px">
+                <img src="{{ club.logo.url }}" alt="logo du club {{ club.name }}" width="50px" height="50px">
                 <div class="description">
                     <h5>{{ club.name }}</h5>
                     {% if club.president %}

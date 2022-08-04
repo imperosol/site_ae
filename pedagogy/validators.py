@@ -8,11 +8,7 @@ def validate_semester(semester: str) -> None:
     Validateur pour un string représentant un semestre.
     Le string doit être de la forme 'XYYYY', où X vaut 'A' ou 'P', en majuscule,
     et YYYY désigne l'année.
-    :param semester:
-    :type semester:
     :raise ValidationError: Si le string passé en paramètre n'est pas un semestre valide.
-    :return:
-    :rtype:
     """
     if re.match(r"^[A,P]\d{4}$", semester) is None:
         raise ValidationError("Le format du semestre doit être AYYYY ou PYYYY")

@@ -39,14 +39,14 @@
     flex-direction: row;
     column-gap: 30px;
     width: 100%;
-    height: 100%;
 }
 
 .uv-view-infos {
-    width: 400px;
+    min-width: 300px;
     display: flex;
     flex-direction: column;
     row-gap: 30px;
+    margin-bottom: 20px;
 }
 
 .uv-view-infos hr {
@@ -64,12 +64,15 @@
     padding-bottom: 10px;
 }
 
+.panel-title {
+    font-size: 18px;
+    align-self: flex-start;
+    margin-left: 30px;
+}
+
 .uv-panel-row {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
-    height: 100%;
     width: 100%;
 }
 
@@ -79,14 +82,186 @@
 }
 
 .panel-row-descr {
-    width: 60%;
+    width: 50%;
     text-align: right;
+}
+
+.annal-panel-group {
+    width: 80%;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.annal-panel-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 5px 20px;
+    width: 100%;
+}
+
+a.annal-panel-row {
+    text-decoration: none;
+    color: #fff;
+}
+
+a.annal-panel-row:hover .annal-type {
+    text-decoration: underline;
+}
+
+.annal-publisher {
+    color: #bbbbbb;
+}
+
+.moderation-status-comment {
+    font-size: 12px;
+    font-style: italic;
+    align-self: flex-start;
+    text-align: left;
+    margin-left: 10px;
+    margin-top: 5px;
+    color: #bbbbbb;
+}
+
+.user-review {
+    position: relative;
+    border: #4c4c4c solid thin;
+}
+
+.user-review h4 {
+    margin-top: -1px;
+    background-color: #4c4c4c;
+    padding: 10px;
+    width: 175px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+
+.user-review-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: 1s all ease-in;
+}
+
+.shrink {
+    max-height: 0;
+    transition: .5s all ease-out;
+}
+
+.review-comment textarea {
+    background-color: #4c4c4c;
+    width: 90%;
+    display: block;
+    margin: 20px auto;
+    color: #f6f6f6;
+    padding: 10px;
+    min-height: 100px;
+    max-height: 300px;
+    resize: none;
+}
+
+.user-review-content button[type=submit] {
+    margin: 0 0 20px 5%;
+}
+
+.btn {
+    border: none;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.btn-dark {
+    background-color: #4c4c4c;
+    color: #f6f6f6;
 }
 
 .uv-view-content {
     display: flex;
     flex-direction: column;
     row-gap: 20px;
-    width: 100%;
-    height: 100%;
 }
+
+.uv-reviews {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.review {
+    border-radius: 5px;
+}
+
+.review header {
+    margin: 15px;
+    display: flex;
+}
+
+.review header img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.dates {
+    font-style: italic;
+    color: #bbbbbb;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.review-text {
+    margin: 25px 15px 15px;
+}
+
+.review-grades {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-content: center;
+    row-gap: 5px;
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+.review-grades::after {
+    content: "";
+    flex: 1;
+}
+
+.review-grades .grade {
+    flex: 1;
+    min-width: 240px;
+    display: flex;
+    align-items: center;
+}
+
+.review-grades .grade .grade-label {
+    font-style: italic;
+    width: 120px;
+}
+
+@media screen and (max-width: 410px) {
+    .review-grades .grade .grade-label {
+        width: 100px;
+    }
+}
+
+
+.review-grades .grade .rating {
+    flex: 1;
+}
+
+@media screen and (max-width: 500px) {
+    .uv-container {
+        flex-direction: column;
+    }
+
+    .uv-view-infos {
+        width: 100%;
+    }
+}
+
+

@@ -1,0 +1,62 @@
+
+/*.rating {*/
+/*    margin-top: 5px;*/
+/*}*/
+
+.rating input[type="radio"] {
+    position: fixed;
+    right: 100%;
+}
+
+.rating label {
+    font-size: 12px;
+    padding: 5px;
+    margin: 0;
+    float: left;
+}
+
+.rating input[type="radio"]:not(:disabled) + label {
+    cursor: pointer;
+}
+
+.rating input[type="radio"]:hover:not(:disabled) ~ input + label {
+    background: none;
+    color: #aaa;
+}
+
+.rating input[type="radio"]:checked:disabled ~ input + label {
+    background: none;
+    color: #aaa;
+}
+
+.rating:not(:hover) input[type="radio"]:checked ~ input + label {
+    background: none;
+    color: #aaa;
+}
+
+.rating input + label {
+    /*background: #ddd;*/
+    /*background: rgba(255, 255, 255, .15);*/
+    /*color: rgb(255, 150, 70);*/
+    color: orange;
+}
+
+.rating input + label.first {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.rating:not(:hover) input:not(:disabled):checked + label {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.rating input:not(:disabled):hover + label {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.rating input:disabled:checked + label {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}

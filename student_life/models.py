@@ -5,11 +5,16 @@ from django.db import models
 # Create your models here.
 
 
+# idée de fonctionnalité :
+# - remplacer le fonctionnement des rôles par un système utilisant un autre modèle et permettant au président
+#   de créer des rôles customisés pour son club
+
+
 class Club(models.Model):
     name = models.CharField(max_length=64)
     short_description = models.CharField(max_length=256)
     description = models.TextField()
-    logo = models.ImageField(upload_to='static/img/club_logos/', null=True, blank=True)
+    logo = models.ImageField(upload_to='img/club_logos', null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
@@ -34,3 +39,4 @@ class ClubMember(models.Model):
 
     def __str__(self):
         return self.user.username
+

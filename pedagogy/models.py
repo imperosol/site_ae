@@ -1,10 +1,13 @@
 from django.contrib.auth.models import User
 from django.core import validators
 from django.db import models
+from django.db.models import Avg
 
 from site_ae import settings
 from .validators import validate_semester
 
+# valide des chaines de caractères entre 3 et 10 caractères, tout en majuscules et en chiffres
+# sans caractère spéciaux et commençant par une lettre
 uv_code_validator = validators.RegexValidator(regex=r'^[A-Z][A-Z/d]{2,9}$', message='Invalid UV code')
 
 
@@ -101,12 +104,12 @@ class UV(models.Model):
     filiere = models.ManyToManyField(Filiere, blank=True)
     branch = models.ManyToManyField(Branch, blank=True)
 
-    # Hours types CM, TD, TP, THE and Project
-    hours_CM = models.PositiveIntegerField(default=0)
-    hours_TD = models.PositiveIntegerField(default=0)
-    hours_TP = models.PositiveIntegerField(default=0)
-    hours_THE = models.PositiveIntegerField(default=0)
-    hours_PRJ = models.PositiveIntegerField(default=0)
+    # Les heures de travail requises par l'UV
+    hours_CM = models.PositiveIntegerField(default=0)  # cours magistraux
+    hours_TD = models.PositiveIntegerField(default=0)  # travaux dirigés
+    hours_TP = models.PositiveIntegerField(default=0)  # travaux pratiques
+    hours_THE = models.PositiveIntegerField(default=0)  # travail personnel
+    hours_PRJ = models.PositiveIntegerField(default=0)  # travail sur projets
 
     @classmethod
     def __add_categories(cls, uv, json):
@@ -163,6 +166,53 @@ class UV(models.Model):
             pass
         uv.save()
 
+    def get_grades_means(self) -> dict[str, dict[str, str | int]]:
+        """
+        Retourne un dictionnaire contenant les moyennes des notes de chaque catégorie pour l'UV.
+        Les notes sont arrondies à l'entier le plus proche.
+        Chaque élément du dictionnaire est lui-même un dictionnaire contenant
+        un couple clef-valeur avec les moyennes des notes de chaque catégorie
+        et un autre avec les textes à afficher sur le template.
+
+        Les moyennes sont obtenues en faisant la moyenne des notes de tous les avis liés à l'UV.
+        Seuls les commentaires approuvés par la modération sont pris en compte.
+
+        Pour chaque type de note dont la moyenne n'existe pas, la valeur est None.
+
+        Le dictionnaire retourné est de la forme: ::
+
+            {
+                'global': {
+                    'label': 'note globale',
+                    'value': <int ∈ [0;4]> | None
+                }, 'usefulness': {
+                    'label': 'utilité dans le parcours',
+                    'value': <int ∈ [0;4]> | None
+                }, 'interest': {
+                    'label': 'intérêt personnel',
+                    'value': <int ∈ [0;4]> | None
+                }, 'teaching': {
+                    'label': 'enseignement',
+                    'value': <int ∈ [0;4]> | None
+                }, 'work_load': {
+                    'label': 'charge de travail',
+                    'value': <int ∈ [0;4]> | None
+                }
+            }
+
+        """
+        grade_types = 'grade_global', 'grade_usefulness', 'grade_interest', 'grade_teaching', 'grade_work_load'
+        labels = 'note globale', 'utilité dans le parcours', 'intérêt personnel', 'enseignement', 'charge de travail'
+        grades = self.reviews.filter(status=Review.Status.APPROVED).values(*grade_types)
+        grade_dict = dict()
+        for grade_type, label in zip(grade_types, labels):
+            val = grades.aggregate(Avg(grade_type))[f'{grade_type}__avg']
+            key = grade_type.removeprefix('grade_')
+            if val is not None:  # arrondir une variable None causerait une erreur
+                val = round(val)
+            grade_dict[key] = {"label": label, "value": val}
+        return grade_dict
+
     def __str__(self):
         res = f"{self.code} - {self.title} - {self.credits}{self.credit_type}"
         if self.credit_type in [UV.CreditType.CS, UV.CreditType.TM]:
@@ -201,22 +251,22 @@ class Review(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.IntegerField(choices=Status.choices, default=Status.PENDING)
     comment = models.TextField(blank=True)
-    created_ad = models.DateField(auto_now_add=True)
-    updated_ad = models.DateField(auto_now=True)
+    created_ad = models.DateTimeField(auto_now_add=True)
+    updated_ad = models.DateTimeField(auto_now=True)
     grade_global = models.PositiveSmallIntegerField(
         verbose_name="Note globale", validators=[validators.MaxValueValidator(4)], blank=True, null=True
     )
     grade_usefulness = models.PositiveSmallIntegerField(
-        verbose_name="Note d'utilité", validators=[validators.MaxValueValidator(4)], blank=True, null=True
+        verbose_name="Utilité dans le parcours", validators=[validators.MaxValueValidator(4)], blank=True, null=True
     )
     grade_interest = models.PositiveSmallIntegerField(
-        verbose_name="Note d'intérêt", validators=[validators.MaxValueValidator(4)], blank=True, null=True
+        verbose_name="Intérêt personnel", validators=[validators.MaxValueValidator(4)], blank=True, null=True
     )
     grade_teaching = models.PositiveSmallIntegerField(
-        verbose_name="Note de la pédagogie", validators=[validators.MaxValueValidator(4)], blank=True, null=True
+        verbose_name="Enseignement", validators=[validators.MaxValueValidator(4)], blank=True, null=True
     )
     grade_work_load = models.PositiveSmallIntegerField(
-        verbose_name="Note de la charge de travail", validators=[validators.MaxValueValidator(4)], blank=True, null=True
+        verbose_name="Charge de travail", validators=[validators.MaxValueValidator(4)], blank=True, null=True
     )
 
     class Meta:
@@ -232,6 +282,20 @@ class Review(models.Model):
         Retourne True si le commentaire est validé, False sinon.
         """
         return self.status == self.Status.APPROVED
+
+    @property
+    def grade_dict(self) -> dict[str, dict[str, str | int]]:
+        """
+        Retourne un dictionnaire contenant les notes de l'étudiant sur les différents critères.
+        Le format utilisé est directement utilisable par le template grade_stars.html
+        """
+        return {
+            'grade_global': {'label': 'Note globale', 'value': self.grade_global},
+            'grade_usefulness': {'label': 'Utilité dans le parcours', 'value': self.grade_usefulness},
+            'grade_interest': {'label': 'Intérêt personnel', 'value': self.grade_interest},
+            'grade_teaching': {'label': 'Enseignement', 'value': self.grade_teaching},
+            'grade_work_load': {'label': 'Charge de travail', 'value': self.grade_work_load},
+        }
 
 
 class UVFollow(models.Model):

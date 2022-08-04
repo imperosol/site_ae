@@ -1,12 +1,11 @@
-import threading
-
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.http import HttpResponse, HttpRequest
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from datetime import datetime
 import requests
+import mimetypes
 
-from .models import Branch, Filiere, UV
+from .models import Branch, Filiere, UV, Annal
 
 
 @login_required
@@ -77,3 +76,17 @@ def reset_uvs(request: HttpRequest) -> HttpResponse:
             except Exception as e:
                 print(e, uv['code'])
     return HttpResponse('OK', status=200)
+
+
+@login_required
+@require_GET
+def download_annal(request, annal_id):
+    annal = Annal.objects.get(id=annal_id)
+    image_buffer = open(annal.file.path, "rb").read()
+    file_type = mimetypes.guess_type(annal.file.path)[0]
+    print(file_type)
+    response = HttpResponse(image_buffer, content_type=file_type)
+    file_name = f"{annal.uv.code}_{annal.semester}_{annal.get_exam_type_display()}.{annal.file.name.split('.')[-1]}"
+    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+    return response
+

@@ -1,5 +1,3 @@
-import math
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -8,8 +6,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 from eboutique.exceptions import OverdraftError, BankLimitError
-from site_ae.settings import BASE_DIR
-from site_ae.settings import MAX_MONEY_ON_ACCOUNT
+from site_ae.settings import BASE_DIR, MAX_MONEY_ON_ACCOUNT
 
 
 # Create your models here.
@@ -46,7 +43,7 @@ class Product(models.Model):
     name = models.CharField(max_length=40, unique=True)
     description = models.CharField(max_length=100, blank=True)
     price = models.PositiveIntegerField()
-    image = models.ImageField(upload_to=BASE_DIR / 'static/img/products', blank=True, null=True)
+    image = models.ImageField(upload_to="img/products", blank=True, null=True)
     category = models.ForeignKey(ProductGroup, related_name='products', on_delete=models.SET_NULL, null=True)
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -164,7 +161,6 @@ class SoldItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     price = models.PositiveIntegerField()
     date_sold = models.DateTimeField(auto_now_add=True)
-
 
     @classmethod
     def from_basket_item(cls, basket_item: BasketItem):

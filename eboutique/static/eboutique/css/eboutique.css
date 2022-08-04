@@ -37,10 +37,6 @@
     cursor: pointer;
 }
 
-.category-navigation button.dark {
-
-}
-
 .category-navigation button.dark:hover, .category-navigation button.dark.active {
     background-color: #434343;
 }

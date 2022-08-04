@@ -1,0 +1,21 @@
+{# Fragment HTML pour représenter une notation avec cinq étoiles. #}
+{# Nécessite deux arguments au moins : #}
+{#      - label (chaine de caractère qui sera utilisée pour générer les id des éléments) #}
+{#      - value (la valeur de la note entre 0 et 4 inclus. 0 correspond à 1 étoile, 4 correspond à 5 étoiles. #}
+{# Par défaut, l'élément généré n'est pas modifiable. Pour le rendre modifiable, il faut #}
+{# ajouter editable=True aux arguments lors de l'appel du fragment #}
+
+<div class="rating">
+    <input type="radio" name="{{ label | slugify }}" id="{{ label | slugify }}-none" checked/>
+    <label for="{{ label | slugify }}-none" style="display: none"><i class="fa fa-star"></i></label>
+    {% for i in '01234' %}
+        <input type="radio" name="{{ label | slugify }}"
+               id="{{ label | slugify }}-{{ i }}"
+               value="{{ i }}"
+               {% if value|slugify == i %}checked{% endif %}
+               {% if not editable %}disabled{% endif %}/>
+        <label for="{{ label | slugify }}-{{ i }}" {% if forloop.first %}class="first" {% endif %}>
+            <i class="fa fa-star"></i>
+        </label>
+    {% endfor %}
+</div>

@@ -1,0 +1,18 @@
+<div class="uv-info-panel">
+    <h3 class="panel-title">Avis étudiants</h3>
+    {% for key, grade in grades.items %}
+        <div class="uv-panel-row">
+            <span class="panel-row-descr">{{ grade.label }}</span>
+            {% if grade.value is not None %}
+                <span class="panel-row-value">
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=key|add:'global' value=grade.value %}
+            </span>
+            {% else %}
+                <span class="panel-row-value">N/A</span>
+            {% endif %}
+        </div>
+        {% if forloop.first %}
+            <hr>  {# séparateur entre la note globale et les autres #}
+        {% endif %}
+    {% endfor %}
+</div>

@@ -1,0 +1,60 @@
+<form action="{% url 'pedagogy:register_review' %}" method="post" name="post-review" id="post-review-form">
+    {% csrf_token %}
+    <input type="hidden" name="uv" value="{{ uv.id }}">
+    <div class="review-grades">
+        <div class="grade">
+            <span class="grade-label">{{ form.grade_global.label }}</span>
+            {% if user_review %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_global.name value=user_review.grade_global editable=True %}
+            {% else %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_global.name editable=True %}
+            {% endif %}
+        </div>
+        <div class="grade">
+            <span class="grade-label">{{ form.grade_usefulness.label }}</span>
+            {% if user_review %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_usefulness.name value=user_review.grade_usefulness editable=True %}
+            {% else %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_usefulness.name editable=True %}
+            {% endif %}
+        </div>
+        <div class="grade">
+            <span class="grade-label">{{ form.grade_interest.label }}</span>
+            {% if user_review %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_interest.name value=user_review.grade_interest editable=True %}
+            {% else %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_interest.name editable=True %}
+            {% endif %}
+        </div>
+        <div class="grade">
+            <span class="grade-label">{{ form.grade_teaching.label }}</span>
+            {% if user_review %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_teaching.name value=user_review.grade_teaching editable=True %}
+            {% else %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_teaching.name editable=True %}
+            {% endif %}
+        </div>
+        <div class="grade">
+            <span class="grade-label">{{ form.grade_work_load.label }}</span>
+            {% if user_review %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_work_load.name value=user_review.grade_work_load editable=True %}
+            {% else %}
+                {% include 'pedagogy/uv_detail/grade_stars.html' with label=form.grade_work_load.name editable=True %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="review-comment">
+        <label for="user-review-comment"></label>
+        <textarea required spellcheck="true"
+                  name="{{ form.comment.name }}" id="user-review-comment"
+                  placeholder="Votre commentaire...">{% if user_review %}{{ user_review.comment }}{% endif %}</textarea>
+    </div>
+    <button type="button" class="btn btn-dark" id="review-post-btn">
+        {% if user_review %}
+            Éditer
+        {% else %}
+            Envoyer
+        {% endif %}
+        <i class="fa fa-check"></i>
+    </button>
+</form>

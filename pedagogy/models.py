@@ -247,6 +247,8 @@ class Review(models.Model):
         PENDING = (1, 'pending')
         APPROVED = (2, 'approved')
 
+    GRADE_CHOICES = ((i, str(i)) for i in range(5))
+
     uv = models.ForeignKey(UV, on_delete=models.CASCADE, related_name="reviews")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.IntegerField(choices=Status.choices, default=Status.PENDING)
@@ -272,6 +274,9 @@ class Review(models.Model):
     class Meta:
         ordering = ["created_ad"]
         unique_together = ("uv", "author")
+        permissions = (
+            ("approve_review", "Can approve review"),
+        )
 
     def __str__(self):
         return f"{self.author.username} - {self.uv.code}"
@@ -348,6 +353,9 @@ class Annal(models.Model):
 
     class Meta:
         ordering = ["semester", "uv", "exam_type"]
+        permissions = (
+            ("approve_annal", "Can approve annal"),
+        )
 
     @property
     def is_approved(self) -> bool:
@@ -355,5 +363,4 @@ class Annal(models.Model):
         Retourne True si l'annale est approuvée, False sinon.
         """
         return self.status == self.Status.APPROVED
-
 

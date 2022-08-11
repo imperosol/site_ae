@@ -1,0 +1,29 @@
+form {
+    display: block;
+    width: 90%;
+    margin: 20px auto;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    column-gap: 70px;
+    flex-wrap: wrap;
+}
+
+.form-row:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+.form-check-input {
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    row-gap: 10px;
+}
+
+.form-check-input label {
+    display: flex;
+    column-gap: 3px;
+}

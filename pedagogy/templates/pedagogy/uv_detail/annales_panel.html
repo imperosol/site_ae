@@ -1,0 +1,42 @@
+<div class="uv-info-panel">
+    <h3 class="panel-title">Annales ({{ annals.count }})</h3>
+    {% regroup annals by semester as annal_list %}
+    {% for annal in annal_list %}
+        <h4>{{ annal.grouper }}</h4>
+        {% regroup annal.list by is_approved as annal_sublist %}
+        {% for sublist in annal_sublist %}
+            <div class="annal-panel-group {% if sublist.grouper == True %}approved{% else %}pending{% endif %}">
+                <p class="moderation-status-comment">
+                    {% if sublist.grouper == True %}
+                        Approuvées par la modération
+                    {% else %}
+                        Pas encore validées. À vos risques et périls.
+                    {% endif %}
+                </p>
+                {% for item in sublist.list %}
+                    <div class="annal-panel-row" id="annal-{{ item.id }}">
+                        <a href="{% url 'pedagogy:download_annal' item.id %}" class="annal-content">
+                            <span class="annal-type">{{ item.get_exam_type_display }}</span>
+                            <span class="annal-publisher">{{ item.publisher|upper }}</span>
+                        </a>
+                        <div class="moderator-menu">
+                            {% if perms.pedagogy.delete_annal %}
+                                <i class="fa fa-trash" onclick="delete_annal({{ item.id }}, 'annal-{{ item.id }}');"></i>
+                            {% endif %}
+                            {% if perms.pedagogy.approve_annal %}
+                                <i class="fa fa-check-circle" onclick="approve_annal({{ item.id }}, 'annal-{{ item.id }}')"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <br>
+    {% endfor %}
+    <br>
+    <a href="{% url 'pedagogy:annale_add' uv_id %}">
+        <button class="btn btn-dark">
+            Ajouter une annale
+        </button>
+    </a>
+</div>

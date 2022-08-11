@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import CheckConstraint, Q
+from django.db.models import CheckConstraint, Q, F
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
@@ -36,7 +36,7 @@ class Product(models.Model):
         - name (str): Nom du produit.
         - price (int): Prix du produit en centimes.
         - category (ProductGroup): Catégorie du produit.
-        - image (str): Chemin vers l'image du produit.
+        - image (ImageField): Chemin vers l'image du produit.
         - description (str): Brève description du produit.
         - is_available (bool): Indique si le produit est disponible ou non.
     """

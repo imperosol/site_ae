@@ -4,26 +4,59 @@
 
 {% block additional_css %}
     <link rel="stylesheet" href="{% static 'pedagogy/css/uv_style.css' %}">
+    <link rel="stylesheet" href="{% static 'pedagogy/css/search_form_style.css' %}">
+    <script defer src="{% static 'pedagogy/js/uv_search.js' %}"></script>
+    <script defer src="//unpkg.com/alpinejs"></script>
 {% endblock %}
 
 {% block content %}
-{#    <h1>Recherche d'une UV</h1>#}
-{#    <form action="">#}
-{#        {{ form }}#}
-{#    </form>#}
+    <h1>Recherche d'une UV</h1>
+    <form action="{% url "pedagogy:uv_search" %}" method="get" name="search-uv-form">
+        <div class="form-row">
+            <div>
+                <h4>{{ form.branches_ing.label }}</h4>
+                <div class="form-check-input">
+                    {{ form.branches_ing }}
+                </div>
+            </div>
+            <div>
+                <h4>{{ form.branches_app.label }}</h4>
+                <div class="form-check-input">
+                    {{ form.branches_app }}
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div>
+                <h4>{{ form.categories.label }}</h4>
+                <div class="form-check-input">
+                    {{ form.categories }}
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div>
+                <h4>{{ form.name_search.label }}</h4>
+                <div class="form-check-input">
+                    {{ form.name_search }}
+                </div>
+            </div>
+        </div>
+        <button type="submit" id="uv-search-button">Rechercher</button>
+    </form>
 
     <hr>
-
-    {% if user.followed_uvs.exists %}
+    {% if uvs %}
         <ul class="uvs-list">
-            {% for uv in user.followed_uvs.all %}
+            {% for uv in uvs %}
                 <li>
-                    <a href="{% url 'pedagogy:uv_detail' uv.uv.code %}">
-                        {{ uv.uv.code }} - {{ uv.uv.title }} {% if not uv.uv.is_open %}(UE fermée){% endif %}
+                    <a href="{% url 'pedagogy:uv_detail' uv.code %}">
+                        {{ uv.code }} - {{ uv.title }} {% if not uv.is_open %}(UE fermée){% endif %}
                     </a>
                 </li>
             {% endfor %}
         </ul>
+
     {% endif %}
 
 

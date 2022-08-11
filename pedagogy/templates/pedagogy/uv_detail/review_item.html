@@ -1,0 +1,42 @@
+{% load markdownify %}
+
+
+<div id="review-of-{{ review.author|slugify }}"
+     class="review {% if review.is_approved %}approved{% else %}pending{% endif %}">
+    <div class="moderator-menu">
+        {% if perms.pedagogy.delete_review or review.author == request.user %}
+            <i class="fa fa-trash fa-2x"
+               onclick="delete_review({{ review.id }}, 'review-of-{{ review.author|slugify }}')"></i>
+        {% endif %}
+        {% if perms.pedagogy.approve_review and not review.is_approved %}
+            <i class="fa fa-check-circle fa-2x"
+               onclick="validate_review({{ review.id }}, 'review-of-{{ review.author|slugify }}')"></i>
+        {% endif %}
+    </div>
+    <header>
+        <img src="{{ review.author.profile.profile_picture.url }}"
+             alt="photo de profil de {{ review.author }}">
+        <div> {# les divs sans classe servent juste à grouper les items pour le flex #}
+            <h4>{{ review.author }}</h4>
+            <div class="dates">
+                <p>Publié le : {{ review.created_ad }}</p>
+                {% if review.updated_ad != review.created_ad %}
+                    <p>Édité le : {{ review.updated_ad }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    <div class="review-grades">
+        {% for key, grade in review.grade_dict.items %}
+            <div class="grade">
+                <span class="grade-label">{{ grade.label }}</span>
+                {% if grade.value is not None %}
+                    {% include 'pedagogy/uv_detail/grade_stars.html' with label=key|add:review.author.username value=grade.value %}
+                {% else %}
+                    <span class="">N/A</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <p class="review-text">{{ review.comment|markdownify }}</p>
+</div>

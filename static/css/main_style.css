@@ -8,7 +8,7 @@
 }
 
 body {
-    background-color: #393939;
+    background-color: #2d2d2d;
 }
 
 h1 {
@@ -33,7 +33,6 @@ nav {
     position: fixed;
     top: 0;
     padding: 0;
-    /*background-color: #1a78b3;*/
     background-color: #393939;
     width: 100%;
     color: white;
@@ -58,7 +57,6 @@ nav a, .dropdown {
 }
 
 nav a:hover, .dropdown:hover {
-    /*background-color: #454545;*/
     transition: .5s background-position;
     background-position: 0 -100%;
 }
@@ -94,13 +92,19 @@ main {
     box-shadow: #111 0 0 15px;
 }
 
+@media screen and (max-width: 600px) {
+    main {
+        width: 100%;
+    }
+}
+
 main.light {
     background-color: #f6f6f6;
     color: black;
 }
 
 main.dark {
-    background-color: #393939;
+    background-color: #2d2d2d;
     color: white;
 }
 

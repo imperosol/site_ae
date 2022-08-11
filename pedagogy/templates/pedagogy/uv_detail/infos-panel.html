@@ -1,0 +1,65 @@
+<div class="uv-info-panel">
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Catégorie</span>
+        <span class="panel-row-value">{{ uv.credit_type }}</span>
+    </div>
+    <hr>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Crédits</span>
+        <span class="panel-row-value">{{ uv.credits }}</span>
+    </div>
+    <hr>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Cours magistral</span>
+        <span class="panel-row-value">{{ uv.hours_CM }} h</span>
+    </div>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Travaux dirigés</span>
+        <span class="panel-row-value">{{ uv.hours_TD }} h</span>
+    </div>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Travaux pratiques</span>
+        <span class="panel-row-value">{{ uv.hours_TP }} h</span>
+    </div>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Travail personnel</span>
+        <span class="panel-row-value">{{ uv.hours_THE }} h</span>
+    </div>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Projets</span>
+        <span class="panel-row-value">{{ uv.hours_PRJ }} h</span>
+    </div>
+    <hr>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Disponibilité</span>
+        <div class="panel-row-value">
+            {% if uv.spring %}
+                <p>Printemps</p>
+            {% endif %}
+            {% if uv.fall %}
+                <p>Automne</p>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Responsable</span>
+        <div class="panel-row-value">
+            {% if uv.spring %}
+                <p>
+                    {{ uv.spring_manager }}
+                    {% if uv.fall and uv.fall_manager != uv.spring_manager %}(printemps){% endif %} </p>
+            {% endif %}
+            {% if uv.fall and uv.fall_manager != uv.spring_manager or not uv.spring %}
+                <p>
+                    {{ uv.fall_manager }}
+                    {% if uv.spring and uv.spring_manager != uv.fall_manager %}(automne){% endif %} </p>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="uv-panel-row">
+        <span class="panel-row-descr">Langue</span>
+        <span class="panel-row-value">{{ uv.language }}</span>
+    </div>
+</div>

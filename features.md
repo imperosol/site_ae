@@ -12,3 +12,7 @@
 - Paiement par carte bleue
 - Ajout d'une interface d'administration
 
+## pedagogy
+
+- paginer la liste des uvs
+

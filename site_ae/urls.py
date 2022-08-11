@@ -21,6 +21,7 @@ from site_ae import settings
 
 urlpatterns = [
     path('', include('home.urls')),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path('vie-etu/', include('student_life.urls')),
     path('eboutique/', include('eboutique.urls')),
